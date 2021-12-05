@@ -7,7 +7,7 @@ unset _dir
 set -e
 
 SCRIPT_NAME="$0"
-CRATE_NAME_PREFIX="aoc2019-"
+CRATE_NAME_PREFIX="aoc2021-"
 
 function get_day_crate_name_from_args {
     local day="$1"
