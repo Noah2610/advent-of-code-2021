@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# shellcheck source=./util.sh
+_dir="$( dirname "$0" )"
+source "${_dir}/share.sh"
+unset _dir
+
+check "cargo"
+
+function run {
+    local crate_name
+    crate_name="$( get_day_crate_name_from_args "$@" )"
+    shift
+    cargo run --package "$crate_name" "$@"
+}
+
+run "$@"
