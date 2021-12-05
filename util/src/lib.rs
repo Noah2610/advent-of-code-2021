@@ -1,4 +1,5 @@
-//! Advent of Code 2019 - shared utility functions for all puzzles
+//! Advent of Code 2021 - shared utility functions for all puzzles.
+//! Copied over from my old Rust Advent of Code 2019 repo.
 
 const INPUT_FILENAME: &str = "input.txt";
 
