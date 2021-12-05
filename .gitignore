@@ -6,3 +6,5 @@ target/
 logs/
 /bin/util.sh
 out
+
+/day-*/input.txt
