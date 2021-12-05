@@ -12,6 +12,11 @@ check "sed"
 ROOT_CARGO_TOML="${ROOT}/Cargo.toml"
 check_file "$ROOT_CARGO_TOML"
 
+UTIL_CRATE_NAME="aoc_util"
+UTIL_CRATE_ALIAS="util"
+
+set -e
+
 function new_day {
     local day="$1"
     local crate_name
@@ -39,6 +44,43 @@ function new_day {
         && mv "${cargo_toml}.tmp" "$cargo_toml"
     # Add aoc-util dependency
     echo 'aoc-util = { path = "../util" }' >> "$cargo_toml"
+
+    # Change some stuff in the newly generated crate's main.rs
+    local main_rs="${ROOT}/${day}/src/main.rs"
+    check_file "$main_rs"
+    # Add boilerplate code.
+    prepend_file "$main_rs" "extern crate ${UTIL_CRATE_NAME} as ${UTIL_CRATE_ALIAS};\n"
+    # Add root documentation comment.
+    prepend_file "$main_rs" "$( gen_crate_root_comment "$day" )"
+}
+
+function prepend_file {
+    local file="$1"
+    local text="$2"
+    check_file "$file"
+    echo -e "${text}\n$( cat "$file" )" > "$file"
+}
+
+function gen_crate_root_comment {
+    local day="$1"
+    [ -z "$day" ] && err "[gen_crate_root_comment] Missing day argument"
+    local comment="\
+//! Advent of Code ${AOC_YEAR} - $( day_kebab_to_human "$day" )
+//! https://adventofcode.com/${AOC_YEAR}/day/$( day_kebab_to_number "$day" )\n"
+    echo "$comment"
+}
+
+function day_kebab_to_human {
+    local day="$1"
+    [ -z "$day" ] && err "[convert_day_kebab_to_human] Missing day argument"
+    echo "$day" | sed 's/-/ /g' | sed 's/\b\([A-Za-z]\)/\u\1/g'
+}
+
+function day_kebab_to_number {
+    local day="$1"
+    [ -z "$day" ] && err "[convert_day_kebab_to_number] Missing day argument"
+    # get the number of the day, ignore leading zeros, and remove all non-digits
+    echo "$day" | sed 's/[^0-9]//g' | sed 's/^0*\([0-9]\+\)/\1/'
 }
 
 new_day "$@"
